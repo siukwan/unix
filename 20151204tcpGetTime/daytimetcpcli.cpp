@@ -54,7 +54,7 @@ int main(int argc,char **argv)
 	}
 	
 	if( n < 0 )
-	err_sys( "read error" );
+		err_sys( "read error" );
 
 	exit( 0 );/*exit() in <stdlib.h>*/
     cout<<"Siukwan Program Finished"<<endl;
