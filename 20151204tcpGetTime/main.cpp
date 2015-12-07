@@ -1,19 +1,21 @@
 #include<stdio.h>
 #include<iostream>
+#include"memory.h"
 #include<sys/socket.h>
 #include<netinet/in.h>
 #define MAXLINE 4096
 using namespace std;
+#define bzero(ptr,n) memset(ptr,0,n)
 
 void err_quit(string str)
 {
-cout<<str<<endl;
-//exit(0);
+	cout<<str<<endl;
+	//exit(0);
 }
 void err_sys(string str)
 {
-cout<<str<<endl;
-//exit(0);
+	cout<<str<<endl;
+	//exit(0);
 }
 
 int main(int argc,char **argv)
@@ -32,5 +34,3 @@ int main(int argc,char **argv)
     printf("123\n");
     return 0;
 }
-~                                                                                                                                 
-~        
