@@ -1,3 +1,9 @@
+/*
+1. g++ tcpdaytimesrv.cpp -o server
+2. sudo ./server  
+PS:because it use the port 13,it must be the root.
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
@@ -6,31 +12,55 @@
 #include<sys/socket.h>
 #include<sys/un.h>
 #include<arpa/inet.h>
+#include<syslog.h>
 using namespace std;
 
 #define MAXLINE 4096
 #define LISTENQ 1024
 #define bzero(ptr,n) memset(ptr,0,n)
 #define SA sockaddr
-void err_sys(string str)
+int daemon_proc;
+void err_doit(int errnoflag, int level ,const char *fmt, va_list ap)
 {
-	cout<<str<<endl;
-	exit(0);
+	int errno_save,n;
+	char buf[MAXLINE+1];
+
+	errno_save = errno;
+#ifdef HAVE_VSNPRINTF
+	vsnprintf(buf,MAXLINE, fmt , ap);
+ #else
+	vsprintf(buf,fmt,ap);
+#endif
+	n=strlen(buf);
+	if(errnoflag) 
+		snprintf(buf+n,MAXLINE-n,": %s",strerror(errno_save));
+	strcat(buf,"\n");	
+	if(daemon_proc)
+	{
+		syslog(level,buf);
+	}
+	else
+	{
+		fflush(stdout);
+		fputs(buf,stderr);
+		fflush(stderr);
+	}
 }
-//此函数是在程序发生错误时被调用    
-//先输出字符串fmt，再根据errno输出错误原因（如果有的话），最后退出程序    
-//注：在多线程程序中，错误原因可能不正确    
-void error_quit(char *fmt, ...)    
-{    
-  /*  int res;    
-    va_list list;    
-    va_start(list, fmt);    
-    res = vfprintf(stderr, fmt, list);    
-    if( errno != 0 )    
-		fprintf(stderr, " : %s", strerror(errno));
-	fprintf(stderr, "\n", list);    
-    va_end(list);    
-	*/exit(1);    
+void err_sys(const char *fmt,...)
+{
+	va_list ap;
+	va_start(ap,fmt);
+	err_doit(1,LOG_ERR,fmt,ap);
+	va_end(ap);
+	exit(1);
+}
+void err_quit(const char *fmt,...)
+{
+	 va_list ap;
+	 va_start(ap,fmt);
+	 err_doit(0,LOG_ERR, fmt,ap);
+	 va_end(ap);
+	 exit(1);
 }
 /*包裹函数*/
 int Socket(int family,int type ,int protocol)
@@ -43,41 +73,37 @@ int Socket(int family,int type ,int protocol)
 void Connect(int fd, const struct sockaddr *sa, socklen_t salen)    
 {    
     if (connect(fd, sa, salen) < 0)    
-		error_quit("connect error");    
+		err_quit("connect error");    
 }    
 			  
 void Listen(int fd, int backlog)    
 {    
 	if (listen(fd, backlog) < 0)    
-		error_quit("listen error");    
+		err_quit("listen error");    
 }    
 						    
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen)    
 {    
 	if (bind(fd, sa, salen) < 0)
-	{
-		cout<<"bind error"<<endl;
-		exit(1);
-	}
-	//	error_quit("bind error");    
+		err_quit("bind error");    
 }    
 										  
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)    
 {    
 	int n = accept(fd, sa, salenptr);    
 	if ( n < 0)    
-		error_quit("accept error");    
+		err_quit("accept error");    
 	return n;    
 } 
 void Write(int fd, void *ptr, size_t nbytes)    
 {    
     if (write(fd, ptr, nbytes) != nbytes)    
-		error_quit("write error");    
+		err_quit("write error");    
 } 
 void Close(int fd)    
 {    
     if (close(fd) == -1)    
-	error_quit("close error");    
+	err_quit("close error");    
 }   
 int main(int argc, char **argv)
 {
