@@ -54,8 +54,12 @@ void Listen(int fd, int backlog)
 						    
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen)    
 {    
-	if (bind(fd, sa, salen) < 0)    
-		error_quit("bind error");    
+	if (bind(fd, sa, salen) < 0)
+	{
+		cout<<"bind error"<<endl;
+		exit(1);
+	}
+	//	error_quit("bind error");    
 }    
 										  
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)    
@@ -94,7 +98,9 @@ int main(int argc, char **argv)
 	cout<<"In the loop..."<<endl;
 	for(;;)
 	{
+		cout<<"Wait for connecting..."<<endl;
 		connfd = Accept(listenfd,(SA *)NULL,NULL);
+		cout<<"connected!"<<endl;
 		ticks = time(NULL);
 		snprintf(buff, sizeof(buff),"%.24s\r\n",ctime(&ticks));
 		Write(connfd, buff, strlen(buff));
