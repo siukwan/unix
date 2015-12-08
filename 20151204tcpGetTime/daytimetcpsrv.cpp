@@ -6,9 +6,11 @@ PS:because it use the port 13,it must be the root.
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<unistd.h>
+#include<stdarg.h>
 #include<iostream>
-#include"memory.h"
+#include<memory.h>
+#include<unistd.h>
+#include<errno.h>
 #include<sys/socket.h>
 #include<sys/un.h>
 #include<arpa/inet.h>
@@ -85,7 +87,7 @@ void Listen(int fd, int backlog)
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen)    
 {    
 	if (bind(fd, sa, salen) < 0)
-		err_quit("bind error");    
+		err_quit("bind error,if you use the port 13,you may use sudo");    
 }    
 										  
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)    
