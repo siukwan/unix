@@ -2,6 +2,7 @@
 1. g++ tcpdaytimecli.cpp -o client
 2. ./client 127.0.0.1   (or ./clent XXX.XXX.XXX.XXX  XXX.XXX.XXX.XXX is the server's ip  )
 */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdarg.h>
