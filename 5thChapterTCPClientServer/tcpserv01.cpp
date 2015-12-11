@@ -151,14 +151,22 @@ void str_echo(int sockfd)
 {
 	ssize_t n;
 	char    buf[MAXLINE];
-again:
+
+while(1)
+{
 	while( (n==read(sockfd, buf, MAXLINE)) >0 )
+	{
 		Writen(sockfd ,buf, n);
+		printf("%s\n",buf);
+	}
+
 	if( n<0 && errno == EINTR )
-		goto again;
+		continue;
 	else if(n<0)
 		err_sys("str_echo: read error");
 }
+}
+
 
 
 int main(int argc, char **argv)
@@ -192,7 +200,7 @@ int main(int argc, char **argv)
 		/*accept (blocking)*/
 		chilen=sizeof(cliaddr);
 		connfd = Accept(listenfd,(SA *)&cliaddr, &chilen);/*read the info in the cliaddr*/
-		
+		cout<<"Forking..."<<endl;
 		if( (childpid = Fork()) == 0 )
 		{/*if pid == 0, it is the child process*/
 			/*close listening socket*/
@@ -204,6 +212,7 @@ int main(int argc, char **argv)
 			/*child process have finished the work ,then exits*/
 			exit(0);
 		}
+		cout<<"Forked!"<<endl;
 		Close(connfd);
 	}
 
