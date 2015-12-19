@@ -114,13 +114,13 @@ static char *read_ptr;
 static char read_buf[MAXLINE];
 
 static ssize_t my_read(int fd, char *ptr)
-{
+{// 读取输入
 	if(read_cnt <= 0 )
 	{
 again:
 		if( (read_cnt = read(fd, read_buf, sizeof(read_buf))) < 0 )
 		{
-			if(errno == EINTR)
+			if(errno == EINTR)//如果因为信号中断导致读写失败，则重新读取
 				goto again;
 			return (-1);
 		}
@@ -191,6 +191,7 @@ void str_cli(FILE *fp, int sockfd)
 
 	while(Fgets(sendline, MAXLINE, fp)!=NULL)
 	{
+		//通过writen把数据发送到服务器
 		Writen(sockfd, sendline, strlen(sendline));
 		if(Readline(sockfd, recvline, MAXLINE)==0)
 			err_quit("str_cli:server terminated prematurely");
