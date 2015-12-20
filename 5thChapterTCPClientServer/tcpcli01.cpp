@@ -200,7 +200,7 @@ void str_cli(FILE *fp, int sockfd)
 }
 
 
-
+//主函数
 int main(int argc,char **argv)
 {
     int sockfd,n;
