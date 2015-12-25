@@ -149,22 +149,27 @@ pid_t Fork(void)
 }
 void str_echo(int sockfd)
 {
-	ssize_t n;
+	ssize_t n=0;
 	char    buf[MAXLINE];
-
+	printf("准备读区数据...\n");
 	while(1)
 	{
-		while( (n==read(sockfd, buf, MAXLINE)) >0 )
+		printf("进入while(1)循环..\n");
+		while( (n=read(sockfd, buf, MAXLINE)) >0 )
 		{
-			printf("接收到的内容：%s\n准备进行发送...\n",buf);
+			printf("接收到的内容：%s准备进行发送...\n",buf);
 			Writen(sockfd ,buf, n);
 			printf("%s\n",buf);
 		}
 
 		if( n<0 && errno == EINTR )
+		{ 
+			printf("error\n");
 			continue;
+		}
 		else if(n<0)
 			err_sys("str_echo: read error");
+		printf("n大小为：%ld，循环结束\n",n);
 	}
 }
 

@@ -168,9 +168,11 @@ ssize_t readlinebuf(void **vptrptr)
 
 ssize_t Readline(int fd, void *ptr, size_t maxlen)
 {
+	printf("正在执行Readline函数..\n");
 	ssize_t n;
 	if( (n=readline(fd,ptr,maxlen))<0)
 		err_sys("readline error");
+	printf("Readline函数执行完毕，正在返回%ld\n",n);
 	return (n);
 }
 void Fputs(const char *ptr, FILE *stream)
@@ -191,10 +193,22 @@ void str_cli(FILE *fp, int sockfd)
 
 	while(Fgets(sendline, MAXLINE, fp)!=NULL)
 	{
+		printf("std输入的字符串为：%s\n",sendline);
 		//通过writen把数据发送到服务器
-		Writen(sockfd, sendline, strlen(sendline));
-		if(Readline(sockfd, recvline, MAXLINE)==0)
-			err_quit("str_cli:server terminated prematurely");
+		char sendtmp[2];
+		sendtmp[0]='s';
+		sendtmp[1]='a';
+		Writen(sockfd, sendtmp, strlen(sendtmp));
+		printf("发送给服务器...\n");
+		int n=read(sockfd,recvline,MAXLINE);
+		if(n==0)
+			err_quit("str_cli:server terminated prematurely\n");
+		else
+		{
+			printf("读取的数据大小为%d\n%s",n,recvline);
+		}
+		//if(Readline(sockfd, recvline, MAXLINE)==0)
+		//	err_quit("str_cli:server terminated prematurely");
 		Fputs(recvline,stdout);
 	}
 }
