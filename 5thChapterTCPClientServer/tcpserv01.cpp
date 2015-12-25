@@ -152,19 +152,20 @@ void str_echo(int sockfd)
 	ssize_t n;
 	char    buf[MAXLINE];
 
-while(1)
-{
-	while( (n==read(sockfd, buf, MAXLINE)) >0 )
+	while(1)
 	{
-		Writen(sockfd ,buf, n);
-		printf("%s\n",buf);
-	}
+		while( (n==read(sockfd, buf, MAXLINE)) >0 )
+		{
+			printf("接收到的内容：%s\n准备进行发送...\n",buf);
+			Writen(sockfd ,buf, n);
+			printf("%s\n",buf);
+		}
 
-	if( n<0 && errno == EINTR )
-		continue;
-	else if(n<0)
-		err_sys("str_echo: read error");
-}
+		if( n<0 && errno == EINTR )
+			continue;
+		else if(n<0)
+			err_sys("str_echo: read error");
+	}
 }
 
 
@@ -201,17 +202,17 @@ int main(int argc, char **argv)
 		chilen=sizeof(cliaddr);
 		connfd = Accept(listenfd,(SA *)&cliaddr, &chilen);/*read the info in the cliaddr*/
 		cout<<"Forking..."<<endl;
-		if( (childpid = Fork()) == 0 )
-		{/*if pid == 0, it is the child process*/
+		//if( (childpid = Fork()) == 0 )
+		//{/*if pid == 0, it is the child process*/
 			/*close listening socket*/
-			Close(listenfd);
+		//	Close(listenfd);
 
 			/*process the request , return whatever server recieved*/
 			str_echo(connfd);
 
 			/*child process have finished the work ,then exits*/
-			exit(0);
-		}
+		//	exit(0);
+		//}
 		cout<<"Forked!"<<endl;
 		Close(connfd);
 	}

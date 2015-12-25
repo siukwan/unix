@@ -204,7 +204,7 @@ void str_cli(FILE *fp, int sockfd)
 int main(int argc,char **argv)
 {
     int sockfd,n;
-    ;
+    
     sockaddr_in servaddr;//sockaddr_in in <sys/un.h>
 
     if(argc !=2)
@@ -212,7 +212,7 @@ int main(int argc,char **argv)
 	/*socket*/
 	sockfd = Socket(AF_INET, SOCK_STREAM, 0);
 	
-	/*inti */
+	/*init */
     bzero(&servaddr,sizeof(servaddr));//对sockaddr结构体进行初始化清零
 
 	servaddr.sin_family = AF_INET;
