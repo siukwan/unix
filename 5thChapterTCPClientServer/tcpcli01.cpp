@@ -190,26 +190,30 @@ char *Fgets(char *ptr,int n,FILE *stream)
 void str_cli(FILE *fp, int sockfd)
 {
 	char sendline[MAXLINE], recvline[MAXLINE];
-
+	printf("\n请输入字符串：\n");
 	while(Fgets(sendline, MAXLINE, fp)!=NULL)
 	{
-		printf("std输入的字符串为：%s\n",sendline);
+		//printf("std输入的字符串为：%s\n",sendline);
 		//通过writen把数据发送到服务器
-		char sendtmp[2];
-		sendtmp[0]='s';
-		sendtmp[1]='a';
-		Writen(sockfd, sendtmp, strlen(sendtmp));
+		Writen(sockfd, sendline, strlen(sendline));
 		printf("发送给服务器...\n");
 		int n=read(sockfd,recvline,MAXLINE);
 		if(n==0)
 			err_quit("str_cli:server terminated prematurely\n");
 		else
 		{
-			printf("读取的数据大小为%d\n%s",n,recvline);
+			printf("读取的数据大小为%d:\n",n);
 		}
 		//if(Readline(sockfd, recvline, MAXLINE)==0)
 		//	err_quit("str_cli:server terminated prematurely");
+		
+		//输出到stdout
 		Fputs(recvline,stdout);
+
+		//提示输入，并清空
+		printf("\n请输入字符串：\n");
+		memset(recvline,0,MAXLINE);
+		memset(sendline,0,MAXLINE);
 	}
 }
 

@@ -154,12 +154,14 @@ void str_echo(int sockfd)
 	printf("准备读区数据...\n");
 	while(1)
 	{
+		memset(buf,0,MAXLINE);
 		printf("进入while(1)循环..\n");
 		while( (n=read(sockfd, buf, MAXLINE)) >0 )
 		{
 			printf("接收到的内容：%s准备进行发送...\n",buf);
 			Writen(sockfd ,buf, n);
-			printf("%s\n",buf);
+			printf("已经发送：%s\n",buf);
+			memset(buf,0,MAXLINE);
 		}
 
 		if( n<0 && errno == EINTR )
@@ -169,7 +171,12 @@ void str_echo(int sockfd)
 		}
 		else if(n<0)
 			err_sys("str_echo: read error");
-		printf("n大小为：%ld，循环结束\n",n);
+		else if(n==0)
+		{
+			printf("n大小为：%ld，循环结束\n\n",n);
+			return;	
+		}
+	
 	}
 }
 
