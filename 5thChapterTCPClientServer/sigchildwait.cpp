@@ -1,5 +1,5 @@
 /*
-信号处理函数
+2015-12-28信号处理函数
 */
 #include<stdio.h>
 #include<stdlib.h>
