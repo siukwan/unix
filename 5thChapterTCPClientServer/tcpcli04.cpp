@@ -186,6 +186,7 @@ int main(int argc,char **argv)
 	
 		Connect(sockfd[i],(SA *) &servaddr, sizeof(servaddr));
 	}
+	//只对第一个socket进行操作
 	str_cli(stdin,sockfd[0]);
 
 	exit( 0 );/*exit() in <stdlib.h>*/
