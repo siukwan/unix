@@ -19,6 +19,9 @@ void sig_child(int signo)
 	int stat;
 	
 	pid = wait(&stat);
+
+	//
+	//不建议在信号处理函数里面增加控制台输出	
 	printf("child %d terminated\n",pid);
 	return ;	
 }
