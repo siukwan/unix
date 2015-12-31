@@ -18,12 +18,20 @@ PS:because it use the port 13,it must be the root.
 #include<sys/un.h>
 #include<arpa/inet.h>
 #include<syslog.h>
+
+//wait和waitpid函数都在wait.h里面
+#include<sys/wait.h>
+//#include"sigchildwaitpid.h"
 using namespace std;
 
 #define MAXLINE 4096
 #define LISTENQ 1024
 #define bzero(ptr,n) memset(ptr,0,n)
 #define SA sockaddr
+
+//20151231
+typedef void Sigfunc(int);
+
 int daemon_proc;
 void err_doit(int errnoflag, int level ,const char *fmt, va_list ap)
 {
@@ -191,6 +199,15 @@ void sig_chld(int signo)
 	return ;	
 }
 
+//20151230添加
+Sigfunc *Signal(int signo, Sigfunc *func)
+{
+   Sigfunc *sigfunc = signal(signo, func);
+   if ( sigfunc == SIG_ERR)
+       err_quit("signal error");
+   return sigfunc;
+}
+
 int main(int argc, char **argv)
 {
 	cout<<"Server start.."<<endl;
@@ -217,15 +234,16 @@ int main(int argc, char **argv)
 	/*listen*/
 	//进行监听
 	Listen(listenfd,LISTENQ);
-
+	//
+	Signal(SIGCHLD,sig_chld);
 	cout<<"In the loop..."<<endl;
 	for(;;)
 	{
 		cout<<"Wait for connecting..."<<endl;
 		
 		/*accept (blocking)*/
-		chilen=sizeof(cliaddr);
-		connfd = Accept(listenfd,(SA *)&cliaddr, &chilen);/*read the info in the cliaddr*/
+		clilen=sizeof(cliaddr);
+		connfd = Accept(listenfd,(SA *)&cliaddr, &clilen);/*read the info in the cliaddr*/
 		cout<<"Forking..."<<endl;
 		if( (childpid = Fork()) == 0 )
 		{/*if pid == 0, it is the child process*/

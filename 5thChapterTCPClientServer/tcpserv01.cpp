@@ -188,7 +188,7 @@ int main(int argc, char **argv)
 	int         listenfd,connfd;
 	pid_t       childpid;        /*child process id*/
 	sockaddr_in servaddr,cliaddr;/*define cliaddr*/
-	socklen_t   chilen;          /*the size of cliadrr */
+	socklen_t   clilen;          /*the size of cliadrr */
 	
 	/*socket*/
 	listenfd = Socket(AF_INET,SOCK_STREAM,0);
@@ -211,8 +211,8 @@ int main(int argc, char **argv)
 		cout<<"Wait for connecting..."<<endl;
 		
 		/*accept (blocking)*/
-		chilen=sizeof(cliaddr);
-		connfd = Accept(listenfd,(SA *)&cliaddr, &chilen);/*read the info in the cliaddr*/
+		clilen=sizeof(cliaddr);
+		connfd = Accept(listenfd,(SA *)&cliaddr, &clilen);/*read the info in the cliaddr*/
 		cout<<"Forking..."<<endl;
 		if( (childpid = Fork()) == 0 )
 		{/*if pid == 0, it is the child process*/
