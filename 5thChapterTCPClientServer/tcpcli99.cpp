@@ -126,7 +126,9 @@ char *Fgets(char *ptr,int n,FILE *stream)
 		err_quit("fgets error");
 	return rptr;
 }
-void str_cli(FILE *fp, int sockfd)
+
+//20160101，字符串版本
+void str_cli_string(FILE *fp, int sockfd)
 {
 	char sendline[MAXLINE], recvline[MAXLINE];
 	printf("\n请输入字符串：\n");
@@ -156,6 +158,34 @@ void str_cli(FILE *fp, int sockfd)
 	}
 }
 
+//20160101
+struct args{
+	long arg1;
+	long arg2;	
+};
+struct result{
+	long sum;
+};
+
+//二进制版本
+void str_cli(FILE *fp,int sockfd)
+{
+	char sendline[MAXLINE];
+	args m_args;
+	result m_result;
+	while(Fgets(sendline,MAXLINE,fp)!=NULL)
+	{
+		if(sscanf(sendline,"%ld%ld",&m_args.arg1,&m_args.arg2)!=2)
+		{
+			printf("Invalid input:%s",sendline);
+			continue;
+		}
+		Writen(sockfd,&m_args,sizeof(args));
+		if(read(sockfd,&m_result,sizeof(result))==0)
+			err_quit("str_cli:server terminated prematurely");
+		printf("%ld\n",m_result.sum);
+	}
+}
 
 //主函数
 int main(int argc,char **argv)
