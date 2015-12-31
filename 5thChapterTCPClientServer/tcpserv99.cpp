@@ -155,7 +155,8 @@ pid_t Fork(void)
 		err_quit("fork error");
 	return pid;
 }
-void str_echo(int sockfd)
+//回射服务器版本
+void str_echo_old(int sockfd)
 {
 	ssize_t n=0;
 	char    buf[MAXLINE];
@@ -185,6 +186,28 @@ void str_echo(int sockfd)
 			return;	
 		}
 	
+	}
+}
+
+//20160101
+void str_echo(int sockfd)
+{
+	//两个参数
+	long    arg1,arg2;
+	ssize_t n;
+	char    line[MAXLINE];
+
+	while(1)
+	{
+		//连接被客户端关闭
+		if((n = read(sockfd,line,MAXLINE))==0)
+			return;
+		if(sscanf(line,"%ld %ld",&arg1,&arg2) == 2)
+			snprintf(line,sizeof(line),"%ld\n",arg1+arg2);
+		else
+			snprintf(line,sizeof(line),"input error\n");
+		n=strlen(line);
+		Writen(sockfd,line,n);
 	}
 }
 
