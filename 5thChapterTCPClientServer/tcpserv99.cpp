@@ -189,8 +189,8 @@ void str_echo_old(int sockfd)
 	}
 }
 
-//20160101
-void str_echo(int sockfd)
+//20160101,字符串传输版本
+void str_echo_string(int sockfd)
 {
 	//两个参数
 	long    arg1,arg2;
@@ -208,6 +208,29 @@ void str_echo(int sockfd)
 			snprintf(line,sizeof(line),"input error\n");
 		n=strlen(line);
 		Writen(sockfd,line,n);
+	}
+}
+//20160101
+struct args{
+	long arg1;
+	long arg2;
+};
+struct result
+{
+	long sum;
+};
+//20160101,二进制传输版本
+void str_echo(int sockfd)
+{
+	ssize_t n;
+	args m_args;
+	result m_result;
+	while(1)
+	{
+		if((n=read(sockfd,&m_args,MAXLINE))==0)
+			return;
+		m_result.sum = m_args.arg1+m_args.arg2;
+		Writen(sockfd,&m_result,sizeof(result));
 	}
 }
 
