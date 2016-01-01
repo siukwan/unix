@@ -6,42 +6,6 @@
 
 #include"func.h"
 using namespace std;
-
-//回射服务器
-void str_echo(int sockfd)
-{
-	ssize_t n=0;
-	char    buf[MAXLINE];
-//	printf("准备读区数据...\n");
-	while(1)
-	{
-		memset(buf,0,MAXLINE);
-//		printf("进入while(1)循环..\n");
-		while( (n=read(sockfd, buf, MAXLINE)) >0 )
-		{
-//			printf("接收到的内容：%s准备进行发送...\n",buf);
-			Writen(sockfd ,buf, n);
-//			printf("已经发送：%s\n",buf);
-			memset(buf,0,MAXLINE);
-		}
-
-		if( n<0 && errno == EINTR )
-		{
-//			printf("error\n");
-			continue;
-		}
-		else if(n<0)
-			err_sys("str_echo: read error");
-		else if(n==0)
-		{
-//			printf("n大小为：%ld，循环结束\n\n",n);
-			return;
-		}
-
-	}
-}
-
-
 int main(int argc, char **argv)
 {
 	cout<<"Server start.."<<endl;
@@ -68,32 +32,91 @@ int main(int argc, char **argv)
 	/*listen*/
 	//进行监听
 	Listen(listenfd,LISTENQ);
-	//
-	Signal(SIGCHLD,sig_chld);
-	cout<<"In the loop..."<<endl;
-	for(;;)
+
+	//最大文件描述符号
+	int maxfd = listenfd;
+	//初始化初始下标
+	int maxIdx=-1;
+
+	//初始化客户数组为－1
+	int client[FD_SETSIZE];
+	for(int i=0;i<FD_SETSIZE;i++)
 	{
-		cout<<"Wait for connecting..."<<endl;
-		
-		/*accept (blocking)*/
-		clilen=sizeof(cliaddr);
-		connfd = Accept(listenfd,(SA *)&cliaddr, &clilen);/*read the info in the cliaddr*/
-		cout<<"Forking..."<<endl;
-		if( (childpid = Fork()) == 0 )
-		{/*if pid == 0, it is the child process*/
-			/*close listening socket*/
-			Close(listenfd);
+		client[i]=-1;
+	}
 
-			/*process the request , return whatever server recieved*/
-			str_echo(connfd);
+	fd_set rset,allset;
+	//初始化监听集合
+	FD_ZERO(&allset);
+	//把listenfd添加到监听集合
+	FD_SET(listenfd,&allset);
 
-			/*child process have finished the work ,then exits*/
+	cout<<"In the loop..."<<endl;
+	while(1)
+	{
+		rset = allset;
+		//对rset进行select
+		int nReady = Select(maxfd+1,&rset,NULL,NULL,NULL);
 		
-			exit(0);
+		//如果监听就绪，表示有客户进行连接
+		if(FD_ISSET(listenfd,&rset))
+		{
+			printf("有客户进行连接...\n");
+			clilen = sizeof(cliaddr);
+			connfd = Accept(listenfd, (SA*)&cliaddr,&clilen);
+
+			//找出第一个－1的index
+			int firstIdx;
+			for(firstIdx=0;firstIdx<FD_SETSIZE;firstIdx++)
+			{
+				if(client[firstIdx] == -1)
+				{
+					client[firstIdx]=connfd;
+					break;
+				}
+			}
+
+			if(firstIdx == FD_SETSIZE)
+				err_quit("too many clients");
+
+			//添加到监听集合
+			FD_SET(connfd,&allset);
+
+			maxfd=max(maxfd,connfd);
+			maxIdx=max(maxIdx,firstIdx);
+
+			//没有可读的描述符
+			if(--nReady <=0)
+				continue;
 		}
-		printf("派生子线程%d\n",childpid);
-		cout<<"Forked!"<<endl;
-		Close(connfd);
+
+		//遍历所有的客户端
+		for( int i=0;i<=maxIdx;i++)
+		{
+			int sockfd;
+			char buf[MAXLINE];
+			if((sockfd = client[i]) == -1)
+				continue;
+			if(FD_ISSET(sockfd,&rset))
+			{
+				printf("套接字可读...\n");
+				//客户端关闭连接
+				if(read(sockfd,buf,MAXLINE)==0)
+				{
+					Close(sockfd);
+					//移除监听
+					FD_CLR(sockfd,&allset);
+					client[i]=-1;
+				}
+				else
+					Writen(sockfd,buf,strlen(buf));
+				memset(buf,0,strlen(buf));
+				//没有可读的描述符
+				if(--nReady<=0)
+					break;
+			}
+		}
+
 	}
 
 	return 0;
