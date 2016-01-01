@@ -1,10 +1,6 @@
 /*
- * use the 1stChapter client program
- * record the client's ip and port,and display them.
-
-1. g++ tcpdaytimesrv.cpp -o server
-2. sudo ./server  
-PS:because it use the port 13,it must be the root.
+1. g++  -o client tcpcli.cpp func_err.cpp func_wrap.cpp
+2. use the port 9877 (MYPORT),no sudo anymore
 */
 
 #include"func.h"
@@ -44,7 +40,7 @@ int main(int argc, char **argv)
 	bzero(&servaddr, sizeof(servaddr));	
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port = htons(13);/* daytime server*/
+	servaddr.sin_port = htons(MYPORT);/* daytime server*/
 	
 	/*bind*/
 	//绑定

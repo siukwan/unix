@@ -1,12 +1,13 @@
 /*
-1. g++ tcpcli.cpp -o client
-2. ./client 127.0.0.1 (or ./clent XXX.XXX.XXX.XXX XXX.XXX.XXX.XXX is the server's ip )
+1. g++  -o client tcpcli.cpp func_err.cpp func_wrap.cpp
+2. ./client 127.0.0.1 (or ./clent XXX.XXX.XXX.XXX，XXX.XXX.XXX.XXX is the server's ip )
 */
 #include"func.h"
 using namespace std;
 //二进制版本
 void str_cli(FILE *fp,int sockfd)
 {
+	printf("please 2 numbers:\n");
 	char sendline[MAXLINE];
 	args m_args;
 	result m_result;
@@ -36,7 +37,7 @@ int main(int argc,char **argv)
 	if(argc !=2)
 	{
 		printf("usage: ./client <IPaddress> For an example: ./client 192.168.1.111\n");
-		printf("Now,the default IP address is 127.0.0.1");
+		printf("Now,the default IP address is 127.0.0.1\n");
 		ip_address=ip_default;
 	}
 	else
@@ -47,7 +48,7 @@ int main(int argc,char **argv)
 	/*init */
 	bzero(&servaddr,sizeof(servaddr));//对sockaddr结构体进行初始化清零
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(9877);//时间服务器的端口
+	servaddr.sin_port = htons(MYPORT);//时间服务器的端口
 
 	/*inet_pton in <arpa/inet.h>*/
 	if( inet_pton( AF_INET,ip_address, &servaddr.sin_addr ) <=0 )

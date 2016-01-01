@@ -23,6 +23,8 @@
 #define bzero(ptr,n) memset(ptr,0,n)
 #define recv(a,b,c,d) recvfrom(a,b,c,d,0,0)
 #define send(a,b,c,d) sendto(a,b,c,d,0,0)
+#define MYPORT 9877
+
 //20151231
 typedef void Sigfunc(int);
 //20160101
