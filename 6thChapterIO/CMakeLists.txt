@@ -1,0 +1,7 @@
+PROJECT (CLIENT)
+SET(CLIENT_SRC_LIST tcpcli.cpp func_err.cpp func_wrap.cpp)
+MESSAGE(STATUS "This is BINARY dir" ${CLIENT_BINARY_DIR})
+MESSAGE(STATUS "This is SOURCE dir" ${CLIENT_SOURCE_DIR})
+ADD_EXECUTABLE(client ${CLIENT_SRC_LIST})
+
+
