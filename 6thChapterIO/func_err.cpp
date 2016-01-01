@@ -1,7 +1,7 @@
 /*
 包含错误函数：err
 */
-#include<func.h>
+#include"func.h"
 using namespace std;
 #define MAXLINE 4096
 int daemon_proc;

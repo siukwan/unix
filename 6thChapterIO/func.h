@@ -45,6 +45,7 @@ extern char *Fgets(char *ptr,int n,FILE *stream);
 
 //server
 extern void     Bind(int fd, const struct sockaddr *sa, socklen_t salen);
+extern void     Listen(int fd, int backlog);
 extern int      Accept(int fd, struct sockaddr *sa, socklen_t *salenptr);
 extern void     Write(int fd, void *ptr, size_t nbytes);
 extern void     Close(int fd);

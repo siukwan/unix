@@ -73,6 +73,11 @@ void Bind(int fd, const struct sockaddr *sa, socklen_t salen)
 	if (bind(fd, sa, salen) < 0)
 		err_quit("bind error,if you use the port 13,you may use sudo");
 }
+void Listen(int fd, int backlog)
+{
+	if (listen(fd, backlog) < 0)
+		err_quit("listen error");
+}
 
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
