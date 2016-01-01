@@ -14,10 +14,13 @@
 #include<sys/un.h>
 #include<arpa/inet.h>
 #include<syslog.h>
+#include<sys/syslimits.h>
 //wait和waitpid函数都在wait.h里面
 #include<sys/wait.h>
 //select函数在select.h中
 //#include<sys/select.h>
+
+#include<sys/poll.h>
 
 #define SA sockaddr
 #define MAXLINE 4096
@@ -26,6 +29,7 @@
 #define recv(a,b,c,d) recvfrom(a,b,c,d,0,0)
 #define send(a,b,c,d) sendto(a,b,c,d,0,0)
 #define MYPORT 9877
+#define INFTIM (-1)
 
 //20151231
 typedef void Sigfunc(int);
@@ -58,6 +62,7 @@ extern void     sig_chld(int signo);
 extern Sigfunc *Signal(int signo, Sigfunc *func);
 
 extern int  Select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);
+extern int Poll(struct pollfd *fdarray, unsigned long nfds, int timeout);
 extern void Shutdown(int fd, int how);
 //select01 P133
 extern void str_cli_select01(FILE *fp,int sockfd);

@@ -39,27 +39,25 @@ int main(int argc, char **argv)
 	int maxIdx=-1;
 
 	//初始化客户数组为－1
-	int client[FD_SETSIZE];
-	for(int i=0;i<FD_SETSIZE;i++)
+	pollfd client[OPEN_MAX];
+	//0好设置为listenfd
+	client[0].fd=listenfd;
+	//设置为普通数据可读
+	client[0].events = POLLRDNORM;
+	for(int i=1;i<OPEN_MAX;i++)
 	{
-		client[i]=-1;
+		client[i].fd=-1;
 	}
 
-	fd_set rset,allset;
-	//初始化监听集合
-	FD_ZERO(&allset);
-	//把listenfd添加到监听集合
-	FD_SET(listenfd,&allset);
 
 	cout<<"In the loop..."<<endl;
 	while(1)
 	{
-		rset = allset;
 		//对rset进行select
-		int nReady = Select(maxfd+1,&rset,NULL,NULL,NULL);
+		int nReady = Poll(client,maxfd+1,INFTIM);
 		
 		//如果监听就绪，表示有客户进行连接
-		if(FD_ISSET(listenfd,&rset))
+		if(client[0].revents & POLLRDNORM)
 		{
 			printf("有客户进行连接...\n");
 			clilen = sizeof(cliaddr);
@@ -67,20 +65,20 @@ int main(int argc, char **argv)
 
 			//找出第一个－1的index
 			int firstIdx;
-			for(firstIdx=0;firstIdx<FD_SETSIZE;firstIdx++)
+			for(firstIdx=1;firstIdx<OPEN_MAX;firstIdx++)
 			{
-				if(client[firstIdx] == -1)
+				if(client[firstIdx].fd == -1)
 				{
-					client[firstIdx]=connfd;
+					client[firstIdx].fd=connfd;
 					break;
 				}
 			}
 
-			if(firstIdx == FD_SETSIZE)
+			if(firstIdx == OPEN_MAX)
 				err_quit("too many clients");
 
 			//添加到监听集合
-			FD_SET(connfd,&allset);
+			client[firstIdx].events=POLLRDNORM;
 
 			maxfd=max(maxfd,connfd);
 			maxIdx=max(maxIdx,firstIdx);
@@ -91,22 +89,32 @@ int main(int argc, char **argv)
 		}
 
 		//遍历所有的客户端
-		for( int i=0;i<=maxIdx;i++)
+		for( int i=1;i<=maxIdx;i++)
 		{
 			int sockfd;
 			char buf[MAXLINE];
-			if((sockfd = client[i]) == -1)
+			if((sockfd = client[i].fd) == -1)
 				continue;
-			if(FD_ISSET(sockfd,&rset))
+			if(client[i].revents & (POLLRDNORM|POLLERR))
 			{
 				printf("套接字可读...\n");
+				int result = read(sockfd,buf,MAXLINE);
+				//客户端reset连接
+				if(result<0)
+				{
+					if(errno == ECONNRESET)
+					{
+						Close(sockfd);
+						client[i].fd = -1;
+					}
+					else
+						err_sys("read error");
+				}
 				//客户端关闭连接
-				if(read(sockfd,buf,MAXLINE)==0)
+				else if(result==0)
 				{
 					Close(sockfd);
-					//移除监听
-					FD_CLR(sockfd,&allset);
-					client[i]=-1;
+					client[i].fd=-1;
 				}
 				else
 					Writen(sockfd,buf,strlen(buf));

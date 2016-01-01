@@ -127,7 +127,7 @@ Sigfunc *Signal(int signo, Sigfunc *func)
 }
 
 
-//20150101
+//20160101
 int Select(int nfds, fd_set *readfds, fd_set *writefds,
           fd_set *exceptfds, struct timeval *timeout)
 {
@@ -135,6 +135,15 @@ int Select(int nfds, fd_set *readfds, fd_set *writefds,
    if ( n < 0 )
        err_quit("select error");
    return n;       /* can return 0 on timeout */
+}
+
+//20160101
+int Poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
+{
+ int  n;
+ if ( (n = poll(fdarray, nfds, timeout)) < 0)
+  err_sys("poll error");
+ return(n);
 }
 
 void Shutdown(int fd, int how)
