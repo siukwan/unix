@@ -38,7 +38,8 @@ int main(int argc,char **argv)
 	Connect(sockfd,(SA *) &servaddr, sizeof(servaddr));
 
 	//只对第一个socket进行操作
-	str_cli_select01(stdin,sockfd);
+	//str_cli_select01(stdin,sockfd);
+	str_cli_select02(stdin,sockfd);
 
 	exit( 0 );/*exit() in <stdlib.h>*/
 

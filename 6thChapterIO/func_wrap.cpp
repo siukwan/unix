@@ -137,3 +137,9 @@ int Select(int nfds, fd_set *readfds, fd_set *writefds,
    return n;       /* can return 0 on timeout */
 }
 
+void Shutdown(int fd, int how)
+{
+   if (shutdown(fd, how) < 0)
+       err_quit("shutdown error");
+}
+

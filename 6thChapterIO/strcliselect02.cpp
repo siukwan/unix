@@ -25,12 +25,13 @@ void str_cli_select02(FILE *fp,int sockfd)
 			FD_SET(fileno(fp), &rset);
 		FD_SET(sockfd,&rset);
 		maxfdp1 = max(fileno(fp),sockfd) +1;
-		printf("进行select中...\n");
+		printf("\n进行select中...\n");
 		Select(maxfdp1,&rset,NULL,NULL,NULL);
 
 		//socket is readable
 		if(FD_ISSET(sockfd,&rset))
 		{
+			printf("select：socket\n");
 			if(read(sockfd,buf,MAXLINE)==0)
 			{
 				//如果stdin输入结束，并且sockfd读取也结束，则return
@@ -48,6 +49,7 @@ void str_cli_select02(FILE *fp,int sockfd)
 		//input is readable
 		if(FD_ISSET(fileno(fp),&rset))
 		{
+			printf("select：stdin\n");
 			//文件已经读取完毕，关闭socket的发送功能
 			if(read(fileno(fp),buf,MAXLINE) == 0)
 			{
@@ -56,8 +58,7 @@ void str_cli_select02(FILE *fp,int sockfd)
 				FD_CLR(fileno(fp),&rset);
 				continue;
 			}
-				return ;
-			printf("输入的字符串为：%s，进行发送...\n",buf);
+			printf("输入的字符串为：%s（buf自动换行）进行发送...\n",buf);
 			Writen(sockfd,buf,strlen(buf));
 		}
 		memset(buf,0,MAXLINE);

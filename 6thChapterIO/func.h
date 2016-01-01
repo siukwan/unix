@@ -58,7 +58,10 @@ extern void     sig_chld(int signo);
 extern Sigfunc *Signal(int signo, Sigfunc *func);
 
 extern int  Select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);
-//select01
+extern void Shutdown(int fd, int how);
+//select01 P133
 extern void str_cli_select01(FILE *fp,int sockfd);
+//select01 P137
+extern void str_cli_select02(FILE *fp,int sockfd);
 
 #endif

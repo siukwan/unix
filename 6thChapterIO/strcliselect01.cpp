@@ -45,3 +45,4 @@ void str_cli_select01(FILE *fp,int sockfd)
 		memset(sendline,0,MAXLINE);
 	}
 }
+
