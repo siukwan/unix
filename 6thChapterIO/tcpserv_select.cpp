@@ -1,6 +1,6 @@
 /*
- * 这是普通版本的服务器，非select版本
-1. g++  -o server tcpserv.cpp func_err.cpp func_wrap.cpp
+ * select版本的服务器
+1. g++  -o server_select tcpserv.cpp func_err.cpp func_wrap.cpp
 2. use the port 9877 (MYPORT),no sudo anymore
 */
 

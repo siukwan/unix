@@ -3,12 +3,11 @@ PROJECT (UNIX)
 MESSAGE(STATUS "UNIX:This is BINARY dir" ${UNIX_BINARY_DIR})
 MESSAGE(STATUS "UNIX:This is SOURCE dir" ${UNIX_SOURCE_DIR})
 
+#设置错误函数和包裹函数
 SET(LIB_FUNC_ERR_SRC func_err.cpp)
 SET(LIB_FUNC_WRAP_SRC func_wrap.cpp)
-
 #设置库select01
 SET(LIB_SELECT01_SRC strcliselect01.cpp)
-
 #设置库select02
 SET(LIB_SELECT02_SRC strcliselect02.cpp)
 
@@ -18,11 +17,18 @@ SET(CLIENT_SRC_LIST tcpcli.cpp)
 #设置服务器编译文件
 SET(SERVER_SRC_LIST tcpserv.cpp)
 
+#设置select版本服务器编译文件
+SET(SERVER_SELECT_SRC_LIST tcpserv_select.cpp)
+
+#连接库
 ADD_LIBRARY(client STATIC ${LIB_FUNC_ERR_SRC} ${LIB_FUNC_WRAP_SRC} ${LIB_SELECT01_SRC} ${LIB_SELECT02_SRC})
 ADD_LIBRARY(server STATIC ${LIB_FUNC_ERR_SRC} ${LIB_FUNC_WRAP_SRC})
+ADD_LIBRARY(server_select STATIC ${LIB_FUNC_ERR_SRC} ${LIB_FUNC_WRAP_SRC})
+
 #输出可执行文件
 ADD_EXECUTABLE(client ${CLIENT_SRC_LIST})
 ADD_EXECUTABLE(server ${SERVER_SRC_LIST})
+ADD_EXECUTABLE(server_select ${SERVER_SELECT_SRC_LIST})
 
 
 
