@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 	Listen(listenfd,LISTENQ);
 
 	cout<<"In the loop..."<<endl;
-	for(;;)
+	while(1)
 	{
 		cout<<"Wait for connecting..."<<endl;
 		
