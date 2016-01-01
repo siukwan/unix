@@ -16,6 +16,8 @@
 #include<syslog.h>
 //wait和waitpid函数都在wait.h里面
 #include<sys/wait.h>
+//select函数在select.h中
+//#include<sys/select.h>
 
 #define SA sockaddr
 #define MAXLINE 4096
@@ -35,7 +37,7 @@ struct args{
 struct result{
 	long sum;
 };
-
+//client
 extern void err_doit(int errnoflag, int level ,const char *fmt, va_list ap);
 extern void err_sys(const char *fmt,...);
 extern void err_quit(const char *fmt,...);
@@ -54,5 +56,9 @@ extern void     Close(int fd);
 extern pid_t    Fork(void);
 extern void     sig_chld(int signo);
 extern Sigfunc *Signal(int signo, Sigfunc *func);
+
+extern int  Select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);
+//select01
+extern void str_cli_select01(FILE *fp,int sockfd);
 
 #endif

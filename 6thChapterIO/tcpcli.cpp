@@ -4,26 +4,7 @@
 */
 #include"func.h"
 using namespace std;
-//二进制版本
-void str_cli(FILE *fp,int sockfd)
-{
-	printf("please 2 numbers:\n");
-	char sendline[MAXLINE];
-	args m_args;
-	result m_result;
-	while(Fgets(sendline,MAXLINE,fp)!=NULL)
-	{
-		if(sscanf(sendline,"%ld%ld",&m_args.arg1,&m_args.arg2)!=2)
-		{
-			printf("Invalid input:%s",sendline);
-			continue;
-		}
-		Writen(sockfd,&m_args,sizeof(args));
-		if(read(sockfd,&m_result,sizeof(result))==0)
-			err_quit("str_cli:server terminated prematurely");
-		printf("%ld\n",m_result.sum);
-	}
-}
+
 //主函数
 int main(int argc,char **argv)
 {
@@ -57,7 +38,7 @@ int main(int argc,char **argv)
 	Connect(sockfd,(SA *) &servaddr, sizeof(servaddr));
 
 	//只对第一个socket进行操作
-	str_cli(stdin,sockfd);
+	str_cli_select01(stdin,sockfd);
 
 	exit( 0 );/*exit() in <stdlib.h>*/
 

@@ -125,3 +125,15 @@ Sigfunc *Signal(int signo, Sigfunc *func)
        err_quit("signal error");
    return sigfunc;
 }
+
+
+//20150101
+int Select(int nfds, fd_set *readfds, fd_set *writefds,
+          fd_set *exceptfds, struct timeval *timeout)
+{
+   int n = select(nfds, readfds, writefds, exceptfds, timeout);
+   if ( n < 0 )
+       err_quit("select error");
+   return n;       /* can return 0 on timeout */
+}
+

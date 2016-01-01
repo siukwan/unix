@@ -6,21 +6,39 @@
 #include"func.h"
 using namespace std;
 
-//20160101,二进制传输版本
+//回射服务器
 void str_echo(int sockfd)
 {
-	ssize_t n;
-	args m_args;
-	result m_result;
+	ssize_t n=0;
+	char    buf[MAXLINE];
+//	printf("准备读区数据...\n");
 	while(1)
 	{
-		if((n=read(sockfd,&m_args,MAXLINE))==0)
+		memset(buf,0,MAXLINE);
+//		printf("进入while(1)循环..\n");
+		while( (n=read(sockfd, buf, MAXLINE)) >0 )
+		{
+//			printf("接收到的内容：%s准备进行发送...\n",buf);
+			Writen(sockfd ,buf, n);
+//			printf("已经发送：%s\n",buf);
+			memset(buf,0,MAXLINE);
+		}
+
+		if( n<0 && errno == EINTR )
+		{
+//			printf("error\n");
+			continue;
+		}
+		else if(n<0)
+			err_sys("str_echo: read error");
+		else if(n==0)
+		{
+//			printf("n大小为：%ld，循环结束\n\n",n);
 			return;
-		m_result.sum = m_args.arg1+m_args.arg2;
-		Writen(sockfd,&m_result,sizeof(result));
+		}
+
 	}
 }
-
 
 
 int main(int argc, char **argv)
