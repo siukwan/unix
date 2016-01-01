@@ -3,7 +3,12 @@ P133 strcliselect01
 */
 #include"func.h"
 using namespace std;
-//二进制版本
+/*
+ * 第五章
+ * 服务器关闭，客户端阻塞于stdin，输入字符串后，进行发送才发现服务器关闭，退出程序
+ * 第六章
+ * 服务器关闭，客户端的select检测到连接断开，直接检测到，然后退出程序
+ * */
 void str_cli_select01(FILE *fp,int sockfd)
 {
 	int maxfdp1;
@@ -11,7 +16,6 @@ void str_cli_select01(FILE *fp,int sockfd)
 	char sendline[MAXLINE],recvline[MAXLINE];
 
 	FD_ZERO(&rset);
-	printf("\n请输入字符串：\n");
 	while(1)
 	{
 		FD_SET(fileno(fp), &rset);
@@ -34,6 +38,7 @@ void str_cli_select01(FILE *fp,int sockfd)
 		{
 			if(Fgets(sendline,MAXLINE,fp) == NULL)
 				return ;
+			printf("输入的字符串为：%s，进行发送...\n",sendline);
 			Writen(sockfd,sendline,strlen(sendline));
 		}
 		memset(recvline,0,MAXLINE);
