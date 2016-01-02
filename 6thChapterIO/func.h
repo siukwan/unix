@@ -14,7 +14,7 @@
 #include<sys/un.h>
 #include<arpa/inet.h>
 #include<syslog.h>
-#include<sys/syslimits.h>
+//#include<sys/syslimits.h>
 //wait和waitpid函数都在wait.h里面
 #include<sys/wait.h>
 //select函数在select.h中
@@ -30,6 +30,10 @@
 #define send(a,b,c,d) sendto(a,b,c,d,0,0)
 #define MYPORT 9877
 #define INFTIM (-1)
+#ifdef OPEN_MAX
+#else
+#define OPEN_MAX 10240
+#endif
 
 //20151231
 typedef void Sigfunc(int);
