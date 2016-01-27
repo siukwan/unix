@@ -12,12 +12,14 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-
+#include <iostream>
+using namespace std;
 int main( int argc, char* argv[])
 {
+
 	if(argc <= 2)
 	{
-		printf("usage: %s ip_address port_number\n",basename(argv[0]));
+		printf("usage: %s ip_address port_number\n",argv[0]);
 		return 1;
 	}
 
@@ -33,9 +35,11 @@ int main( int argc, char* argv[])
 	int sock = socket (PF_INET,SOCK_STREAM,0);
 	assert(sock >=0);//如果sock小于0，则中断退出
 
+	cout<<"bind"<<endl;
 	int ret = bind(sock, (sockaddr*)&address, sizeof(address));
 	assert(ret!=-1);
 
+	cout<<"listen"<<endl;
 	ret = listen(sock , 5);
 	assert(ret != -1);
 
@@ -48,7 +52,7 @@ int main( int argc, char* argv[])
 	{
 		close(STDOUT_FILENO);
 		dup(connfd);
-		printf("abcd\n");
+		printf("CGI-program\n");
 		close(connfd);
 	}
 
