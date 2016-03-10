@@ -33,10 +33,6 @@ int main()
 	printf("listening...\n");
 	while(1)
 	{
-		timeval timeout;
-		timeout.tv_sec = 5;//设置5秒超时
-		timeout.tv_usec = 0;//微秒设置为0
-
 		fd_set readFds;//读就绪的fd集
 		FD_ZERO(&readFds);//清零
 		FD_SET(listenFd,&readFds);//添加轮询
