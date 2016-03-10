@@ -51,8 +51,8 @@ int main( int argc, char* argv[])
 	else
 	{
 		close(STDOUT_FILENO);
-		dup(connfd);
-		printf("CGI-program\n");
+		int newfd = dup(connfd);
+		printf("CGI-program，原fd%d绑定到新的fd%d\n",connfd,newfd);//原来是输出到标准输出的，但是由于前面关闭了标准输出
 		close(connfd);
 	}
 
