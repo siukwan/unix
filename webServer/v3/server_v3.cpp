@@ -6,6 +6,9 @@
 #include<string.h>
 #include<unistd.h>
 #include<errno.h>
+#include "get_time.h"
+#include "http_session.h"
+#include "http_protocol.h"
 //简单的服务器实现
 int main()
 {
